@@ -17,8 +17,26 @@
     .intervalSeq(Immutable.Range(), 100000)
     .__((count) => (__.log.t = count)); //console.log
 
-  // {AceHTML()}
-    //
+  const TextElement = () => {
+    const __value = __();
+    const onChange = (e) => {
+      __value.t = e.target.value;
+      __value.log("__value");
+    };
+
+    const style = {
+      width: "100%",
+      height: "100%"
+    };
+    const __seqEl = __([__value])
+      .__(([value]) => (<div>
+
+      <textarea style={style} value={value} onChange={onChange}></textarea>
+          </div>));
+
+    __value.t = "default text";
+    return __Element(__seqEl);
+  };
 
   const WebView = React.createClass({
     componentDidMount() {
@@ -49,7 +67,7 @@
                </button></span>
 
                <div className='panefix'>
-
+{TextElement()}
                 </div>
                </div>
 
@@ -59,7 +77,7 @@
                </button></span>
 
                <div className='panefix'>
-
+{TextElement()}
                 </div>
 
                </div>
@@ -81,7 +99,7 @@
           </button></span>
 
           <div className='panefix'>
-
+{TextElement()}
           </div>
           </div>
           </div>

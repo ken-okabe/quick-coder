@@ -32,11 +32,11 @@
     "eslint-plugin-react": "^3.15.0",
     "webpack": "^1.12.11",
     "immutable": "^3.7.6",
-    "react": "^0.14.6",
-    "react-dom": "^0.14.6",
+    "react": "*",
+    "react-dom": "*",
     "react-dragula": "^1.1.10",
     "react-split-pane": "^0.1.22",
-    "timeengine": "^6.2.2",
-    "timeengine-react": "^2.0.2"
+    "timeengine": "*",
+    "timeengine-react": "*"
   }
 }

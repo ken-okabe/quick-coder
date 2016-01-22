@@ -17,24 +17,78 @@
     .intervalSeq(Immutable.Range(), 100000)
     .__((count) => (__.log.t = count)); //console.log
 
-  const TextElement = () => {
-    const __value = __();
+
+  class ContentEditable extends React.Component {
+    constructor() {
+      super();
+      this.emitChange = this.emitChange.bind(this);
+    }
+
+    shouldComponentUpdate(nextProps) {
+      return !this.htmlEl || nextProps.html !== this.htmlEl.innerHTML ||
+        this.props.disabled !== nextProps.disabled;
+    }
+
+    componentDidUpdate() {
+      if (this.htmlEl && this.props.html !== this.htmlEl.innerHTML) {
+        this.htmlEl.innerHTML = this.props.html;
+      }
+    }
+
+    emitChange(evt) {
+      if (!this.htmlEl) return;
+      var html = this.htmlEl.innerHTML;
+      if (this.props.onChange && html !== this.lastHtml) {
+        evt.target = {
+          html: html,
+          text: this.htmlEl.innerText
+        };
+        this.props.onChange(evt);
+      }
+      this.lastHtml = html;
+    }
+
+    render() {
+      return React.createElement(
+        this.props.tagName || 'code',
+        Object.assign({}, this.props, {
+          ref: (e) => this.htmlEl = e,
+          onInput: this.emitChange,
+          onBlur: this.emitChange,
+          contentEditable: !this.props.disabled,
+          dangerouslySetInnerHTML: {
+            __html: this.props.html
+          }
+        }),
+        this.props.children);
+    }
+  }
+
+
+  const Editor = () => {
+    const __html = __().log("__html");
+    const __text = __().log("__text");
+
     const onChange = (e) => {
-      __value.t = e.target.value;
-      __value.log("__value");
+      __html.t = e.target.html;
+      __text.t = e.target.text;
     };
-
     const style = {
-      width: "100%",
-      height: "100%"
+      "width": "100%",
+      "height": "100%",
+      "position": "absolute",
+      "overflow": "auto",
+      "backgroundColor": "#1B2D33"
     };
-    const __seqEl = __([__value])
-      .__(([value]) => (<div>
+    const __seqEl = __([__html])
+      .__(([html]) => (<ContentEditable
+        style={style}
+        html={html}
+        onChange={onChange}
+        disabled={false}
+        />));
 
-      <textarea style={style} value={value} onChange={onChange}></textarea>
-          </div>));
-
-    __value.t = "default text";
+    __html.t = "";
     return __Element(__seqEl);
   };
 
@@ -67,7 +121,7 @@
                </button></span>
 
                <div className='panefix'>
-{TextElement()}
+{Editor()}
                 </div>
                </div>
 
@@ -77,7 +131,7 @@
                </button></span>
 
                <div className='panefix'>
-{TextElement()}
+{Editor()}
                 </div>
 
                </div>
@@ -99,7 +153,7 @@
           </button></span>
 
           <div className='panefix'>
-{TextElement()}
+{Editor()}
           </div>
           </div>
           </div>
@@ -112,8 +166,9 @@
     render() {
       return (
         <div className='paneContainer'>
-               <div className='pane'><span className='handle'>{"Console"}</span>
-                    <div className='panefix'>
+        <div className='pane'><span className='handle'>{"Console"}</span>
+        <div className='panefix'>
+{Editor()}
                     </div>
                </div>
                <div className='pane'><span className='handle'>{"WebBrowser"}</span>
@@ -274,146 +329,9 @@
 
 
 
-  /*
-    const AceEditor = React.createClass({
-      propTypes: {
-        mode: React.PropTypes.string,
-        theme: React.PropTypes.string,
-        name: React.PropTypes.string,
-        height: React.PropTypes.string,
-        width: React.PropTypes.string,
-        fontSize: React.PropTypes.number,
-        showGutter: React.PropTypes.bool,
-        onChange: React.PropTypes.func,
-        defaultValue: React.PropTypes.string,
-        value: React.PropTypes.string,
-        onLoad: React.PropTypes.func,
-        maxLines: React.PropTypes.number,
-        readOnly: React.PropTypes.bool,
-        highlightActiveLine: React.PropTypes.bool,
-        showPrintMargin: React.PropTypes.bool,
-        selectFirstLine: React.PropTypes.bool,
-        wrapEnabled: React.PropTypes.bool,
-
-
-      },
-      getDefaultProps() {
-        return {
-          name: 'brace-editor',
-          mode: '',
-          theme: '',
-          height: '500px',
-          width: '500px',
-          defaultValue: '',
-          value: '',
-          fontSize: 12,
-          showGutter: true,
-          onChange: null,
-          onLoad: null,
-          maxLines: null,
-          readOnly: false,
-          highlightActiveLine: true,
-          showPrintMargin: true,
-          selectFirstLine: false,
-          wrapEnabled: false
-        };
-      },
-      onChange() {
-        if (this.props.onChange) {
-          const value = this.editor.getValue();
-          this.props.onChange(value);
-        }
-      },
-      componentDidMount() {
-        this.editor = brace.edit(this.props.name);
-        this.editor.$blockScrolling = Infinity;
-        this.editor.getSession().setMode('ace/mode/' + this.props.mode);
-        this.editor.setTheme('ace/theme/' + this.props.theme);
-        this.editor.setFontSize(this.props.fontSize);
-        this.editor.on('change', this.onChange);
-        this.editor.setValue(this.props.defaultValue || this.props.value, (this.props.selectFirstLine === true ? -1 : null));
-        this.editor.setOption('maxLines', this.props.maxLines);
-        this.editor.setOption('readOnly', this.props.readOnly);
-        this.editor.setOption('highlightActiveLine', this.props.highlightActiveLine);
-        this.editor.setShowPrintMargin(this.props.setShowPrintMargin);
-        this.editor.getSession().setUseWrapMode(this.props.wrapEnabled);
-        this.editor.renderer.setShowGutter(this.props.showGutter);
-
-        if (this.props.onLoad) {
-          this.props.onLoad(this.editor);
-        }
-
-        const timeseq = this.props.__val
-          .tMap((val) => {
-
-            this.editor.setValue(val);
-
-          });
-      },
-
-      componentWillReceiveProps(nextProps) {
-        let currentRange = this.editor.selection.getRange();
-
-        // only update props if they are changed
-        if (nextProps.mode !== this.props.mode) {
-          this.editor.getSession().setMode('ace/mode/' + nextProps.mode);
-        }
-        if (nextProps.theme !== this.props.theme) {
-          this.editor.setTheme('ace/theme/' + nextProps.theme);
-        }
-        if (nextProps.fontSize !== this.props.fontSize) {
-          this.editor.setFontSize(nextProps.fontSize);
-        }
-        if (nextProps.maxLines !== this.props.maxLines) {
-          this.editor.setOption('maxLines', nextProps.maxLines);
-        }
-        if (nextProps.readOnly !== this.props.readOnly) {
-          this.editor.setOption('readOnly', nextProps.readOnly);
-        }
-        if (nextProps.highlightActiveLine !== this.props.highlightActiveLine) {
-          this.editor.setOption('highlightActiveLine', nextProps.highlightActiveLine);
-        }
-        if (nextProps.setShowPrintMargin !== this.props.setShowPrintMargin) {
-          this.editor.setShowPrintMargin(nextProps.setShowPrintMargin);
-        }
-        if (nextProps.wrapEnabled !== this.props.wrapEnabled) {
-          this.editor.getSession().setUseWrapMode(nextProps.wrapEnabled);
-        }
-        if (nextProps.value && this.editor.getValue() !== nextProps.value) {
-          this.editor.setValue(nextProps.value, (this.props.selectFirstLine === true ? -1 : null));
-          if (currentRange && typeof currentRange === "object") {
-            this.editor.getSession().getSelection().setSelectionRange(currentRange);
-          }
-        }
-        if (nextProps.showGutter !== this.props.showGutter) {
-          this.editor.renderer.setShowGutter(nextProps.showGutter);
-        }
-      },
-
-      render() {
-        const divStyle = {
-          width: this.props.width,
-          height: this.props.height,
-        };
-
-        return React.DOM.div({
-          id: this.props.name,
-          onChange: this.onChange,
-          style: divStyle,
-        });
-      }
-    });
-
   */
 /*
-  require('brace/mode/html');
-  require('brace/mode/css');
-  require('brace/mode/jsx');
-  require('brace/mode/javascript');
-  require('brace/mode/text');
-  require('brace/theme/monokai');
-  require('brace/theme/chrome');
-
+ 
 
   const seqComponent = (__seq) => {
 
@@ -438,22 +356,7 @@
     return (<SeqComponent/>);
   };
 
-  const AceHTML = () => {
-    return (<AceEditor
-      mode="html"
-      theme="monokai"
-      name="HTML"
-      editorProps={{
-        $blockScrolling: true
-      }}
-      width="100%" height="100%"
-      __val = {__codeHTML}
-      onChange = {(newVal) => {
-        console.log('onChange');
-        __codeHTML.t = newVal;
-      }}
-      />);
-  };
+
 
   // __val ={__codeHTML}
 

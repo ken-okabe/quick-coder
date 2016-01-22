@@ -110,7 +110,7 @@ input {
   width: 100%;
 }
 
- 
+
 
 .gh-fork {
   position: fixed;
@@ -166,7 +166,7 @@ input {
 .handle {
   padding: 0 5px;
   margin-right: 5px;
-  background-color: rgba(0, 0, 0, 0.4);
+
   cursor: move;
 
 .image-thing {

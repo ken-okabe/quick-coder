@@ -1,26 +1,160 @@
 (() => {
   'use strict';
 
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  //var Immutable = require('immutable');
-  var __ = require('timeengine');
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const Immutable = require('immutable');
+  const __ = require('timeengine');
+  const __Element = require('timeengine-react');
 
-//================================
+  const SplitPane = require('react-split-pane');
+  const dragula = require('react-dragula');
+
+  //const brace = require('brace');
+  //================================
+
+  const __interval3 = __
+    .intervalSeq(Immutable.Range(), 100000)
+    .__((count) => (__.log.t = count)); //console.log
+
+  // {AceHTML()}
+    //
+
+  const WebView = React.createClass({
+    componentDidMount() {
+      const webview1 = ReactDOM.findDOMNode(this);
+    /*
+        const timeseq = __webReloadBeacon
+          .tMap((val) => {
+
+            console.log("=============webview");
+            console.log(val);
+            webview1.reload();
+          });
+    */
+    },
+    render() {
+      return (<webview  src="http://localhost:17890"></webview>
+        );
+    }
+
+  });
+  const PaneContainer1 = React.createClass({
+    render() {
+      return (
+        <div className='paneContainer'>
+               <div className='pane'><span className='handle'>{"HTML (index.html)"}
+               <button onClick={() => (0) /*clearHTML*/ }>
+               {"Clear"}
+               </button></span>
+
+               <div className='panefix'>
+
+                </div>
+               </div>
+
+               <div className='pane'><span className='handle'>{"CSS (index.css)"}
+               <button onClick={() => (0) /*clearCSS*/ }>
+               {"Clear"}
+               </button></span>
+
+               <div className='panefix'>
+
+                </div>
+
+               </div>
+        </div>
+        );
+    }
+
+  });
+
+
+  const PaneContainer2 = React.createClass({
+    render() {
+      return (
+        <div className='paneContainer'>
+          <div className='pane'><span className='handle'>{'JavaScript (babel index.jsx -o index0.js; webpack index0.js index.js;)  babelrc=["es2015","react"]'}
+
+          <button onClick={() => (0) /*clearJSX*/ }>
+          {"Clear"}
+          </button></span>
+
+          <div className='panefix'>
+
+          </div>
+          </div>
+          </div>
+        );
+    }
+  });
+
+
+  const PaneContainer3 = React.createClass({
+    render() {
+      return (
+        <div className='paneContainer'>
+               <div className='pane'><span className='handle'>{"Console"}</span>
+                    <div className='panefix'>
+                    </div>
+               </div>
+               <div className='pane'><span className='handle'>{"WebBrowser"}</span>
+                    <div className='panefix'>
+                      <WebView/>
+                    </div>
+               </div>
+          </div>
+        );
+    }
+  });
+
+  const App = React.createClass({
+    componentDidMount() {
+
+      const DOMpaneContainer1 = ReactDOM.findDOMNode(this.refs.p1);
+      const DOMpaneContainer2 = ReactDOM.findDOMNode(this.refs.p2);
+      const DOMpaneContainer3 = ReactDOM.findDOMNode(this.refs.p3);
+
+      console.log(DOMpaneContainer1);
+
+      dragula([DOMpaneContainer1,
+        DOMpaneContainer2,
+        DOMpaneContainer3
+      ], {
+        moves(el, container, handle) {
+          return handle.className === 'handle';
+        }
+      });
+
+
+      //  clearHTML();
+      //  clearCSS();
+      //    clearJSX();
+
+    },
+    render() {
+      return (
+        <SplitPane split="vertical" minSize="50" defaultSize="450">
+            <PaneContainer1 ref="p1"/>
+            <SplitPane split="vertical" minSize="50">
+                  <PaneContainer2 ref="p2"/>
+                  <PaneContainer3 ref="p3" />
+            </SplitPane>
+        </SplitPane>
+        );
+    }
+  });
+
+
+  const mount = ReactDOM.render(<App />, document.getElementById('container'));
 /*
-  var __interval5 = __.intervalSeq(3000)
-    .tMap((tt, t0) => (tt - t0) / 1000);
 
-  var timelineinterval = __interval5
-    .tMap((t) => {
-      //console.log(t);
-    });
 
-  var __codeHTML = __();
-  var __codeCSS = __();
-  var __codeJSX = __();
+  const __codeHTML = __();
+  const __codeCSS = __();
+  const __codeJSX = __();
 
-  var timeseqHTML = __([__interval5, __codeHTML])
+  const timeseqHTML = __([__interval5, __codeHTML])
     .tMap(([interval, code]) => {
       console.log('@@@@@@@@@');
       console.log(code);
@@ -33,7 +167,7 @@
 
     });
 
-  var timeseqCSS = __([__interval5, __codeCSS])
+  const timeseqCSS = __([__interval5, __codeCSS])
     .tMap(([interval, code]) => {
       console.log(code);
 
@@ -44,7 +178,7 @@
       });
     });
 
-  var timeseqJSX = __([__interval5, __codeJSX])
+  const timeseqJSX = __([__interval5, __codeJSX])
     .tMap(([interval, code]) => {
       console.log(code);
 
@@ -74,27 +208,27 @@
       });
     });
 
-  var __webReloadBeacon = __();
+  const __webReloadBeacon = __();
 
-  var __interval500 = __.intervalSeq(500)
+  const __interval500 = __.intervalSeq(500)
     .tMap((tt, t0) => (tt - t0) / 1000);
 
-  var webReload = () => {
+  const webReload = () => {
     console.log("webReload");
     __webReloadBeacon.t = __interval500.t;
 
     console.log(__webReloadBeacon.t);
   };
 
-  var timeseq = __webReloadBeacon
+  const timeseq = __webReloadBeacon
     .tMap((val) => {
 
       console.log("===+++++++++=webview");
       console.log(val);
     });
 
-  var fs = require('fs');
-  var evaluate = (obj) => {
+  const fs = require('fs');
+  const evaluate = (obj) => {
     console.log("!!!evaluate");
     fs.writeFile(obj.filename, obj.data,
       (err) => {
@@ -120,13 +254,10 @@
 
   //========================================
 
-  var SplitPane = require('react-split-pane');
-  var dragula = require('react-dragula');
 
-  var brace = require('brace');
 
   /*
-    var AceEditor = React.createClass({
+    const AceEditor = React.createClass({
       propTypes: {
         mode: React.PropTypes.string,
         theme: React.PropTypes.string,
@@ -194,7 +325,7 @@
           this.props.onLoad(this.editor);
         }
 
-        var timeseq = this.props.__val
+        const timeseq = this.props.__val
           .tMap((val) => {
 
             this.editor.setValue(val);
@@ -266,7 +397,7 @@
   require('brace/theme/chrome');
 
 
-  var seqComponent = (__seq) => {
+  const seqComponent = (__seq) => {
 
     class SeqComponent extends React.Component {
       constructor() {
@@ -274,7 +405,7 @@
         this.state = {
           seq: __seq.t
         };
-        var timeseq = __seq
+        const timeseq = __seq
           .tMap((val) => {
             this.setState({
               seq: val
@@ -289,7 +420,7 @@
     return (<SeqComponent/>);
   };
 
-  var AceHTML = () => {
+  const AceHTML = () => {
     return (<AceEditor
       mode="html"
       theme="monokai"
@@ -307,26 +438,9 @@
   };
 
   // __val ={__codeHTML}
-  var WebView = React.createClass({
-    render() {
-      return (<webview  src="http://localhost:17890"></webview>
-        );
-    },
-    componentDidMount() {
-      var webview1 = ReactDOM.findDOMNode(this);
 
-      var timeseq = __webReloadBeacon
-        .tMap((val) => {
 
-          console.log("=============webview");
-          console.log(val);
-          webview1.reload();
-        });
-
-    }
-  });
-
-  var clearHTML = () => {
+  const clearHTML = () => {
     fs.readFile(__dirname + '/code_template/index.html', 'utf8',
       (err, data) => {
         if (err)
@@ -336,7 +450,7 @@
       });
   };
 
-  var clearCSS = () => {
+  const clearCSS = () => {
     fs.readFile(__dirname + '/code_template/index.css',
       'utf8',
       (err, data) => {
@@ -347,7 +461,7 @@
       });
   };
 
-  var clearJSX = () => {
+  const clearJSX = () => {
     fs.readFile(__dirname + '/code_template/index.jsx',
       'utf8',
       (err, data) => {
@@ -361,15 +475,15 @@
   //============================
 
   (() => {
-    var port = 17890;
-    var directory = "./code";
+    const port = 17890;
+    const directory = "./code";
 
-    var http = require('http');
-    var url = require('url');
-    var path = require("path");
-    var fs = require('fs');
+    const http = require('http');
+    const url = require('url');
+    const path = require("path");
+    const fs = require('fs');
 
-    var mimeTypes = {
+    const mimeTypes = {
       "html": "text/html",
       "js": "text/javascript",
       "css": "text/css",
@@ -381,15 +495,15 @@
     // more
     };
 
-    var request = (req, res) => {
-      var uri = url.parse(req.url).pathname;
-      var dir = path.join(__dirname, directory);
-      var filepath = path.join(dir, unescape(uri));
-      var indexfilepath = path.join(dir, unescape('index.html'));
+    const request = (req, res) => {
+      const uri = url.parse(req.url).pathname;
+      const dir = path.join(__dirname, directory);
+      const filepath = path.join(dir, unescape(uri));
+      const indexfilepath = path.join(dir, unescape('index.html'));
 
       console.info('filepath', filepath);
 
-      var f = (err, stats) => {
+      const f = (err, stats) => {
         if (err) {
           //do nothing
         }
@@ -407,14 +521,14 @@
           return;
         } else if (stats.isFile()) // path exists, is a file
         {
-          var mimeType = mimeTypes[path.extname(filepath).split(".")[1]];
+          const mimeType = mimeTypes[path.extname(filepath).split(".")[1]];
           res
             .writeHead(200,
               {
                 'Content-Type': mimeType
               });
 
-          var fileStream = fs
+          const fileStream = fs
             .createReadStream(filepath)
             .pipe(res);
 
@@ -427,7 +541,7 @@
                 'Content-Type': "text/html"
               });
 
-          var fileStream2 = fs
+          const fileStream2 = fs
             .createReadStream(indexfilepath)
             .pipe(res);
 
@@ -447,16 +561,16 @@
         }
       };
 
-      var component = fs.stat(filepath, f);
+      const component = fs.stat(filepath, f);
       return;
     };
 
-    var serverUp = () => {
+    const serverUp = () => {
       console.info('HTTP server listening', port);
       return;
     };
 
-    var server = http
+    const server = http
       .createServer(request)
       .listen(port, serverUp);
   })();
@@ -464,94 +578,7 @@
 
   //============================
 
-  var App = React.createClass({
-    render() {
-      return (
 
-        <SplitPane split="vertical" minSize="50" defaultSize="450">
-
-              <div className='paneContainer' ref="paneContainer1">
-                     <div className='pane'><span className='handle'>HTML (index.html)
-                     <button onClick={clearHTML}>
-                     Clear
-                     </button></span>
-
-                     <div className='panefix'>
-                     {AceHTML()}
-                      </div>
-                     </div>
-
-                     <div className='pane'><span className='handle'>CSS (index.css)
-                     <button onClick={clearCSS}>
-                     Clear
-                     </button></span>
-
-                     <div className='panefix'>
-
-                      </div>
-
-
-                     </div>
-              </div>
-
-              <SplitPane split="vertical" minSize="50">
-
-                    <div className='paneContainer' ref="paneContainer2">
-                        <div className='pane'><span className='handle'>JavaScript (babel index.jsx -o index0.js; webpack index0.js index.js;)  babelrc=["es2015","react"]
-
-                        <button onClick={clearJSX}>
-                        Clear
-                        </button></span>
-
-                        <div className='panefix'>
-
-                         </div>
-                        </div>
-                    </div>
-
-                    <div className='paneContainer' ref="paneContainer3">
-                           <div className='pane'><span className='handle'>Console</span>
-<div className='panefix'>
-
- </div>
-                           </div>
-                           <div className='pane'><span className='handle'>WebBrowser</span>
-              <div className='panefix'>
-
-              <WebView/>
-
-
-              </div>
-                           </div>
-                    </div>
-              </SplitPane>
-        </SplitPane>
-
-        );
-    },
-    componentDidMount() {
-      var paneContainer1 = ReactDOM.findDOMNode(this.refs.paneContainer1);
-      var paneContainer2 = ReactDOM.findDOMNode(this.refs.paneContainer2);
-      var paneContainer3 = ReactDOM.findDOMNode(this.refs.paneContainer3);
-
-      dragula([paneContainer1,
-        paneContainer2,
-        paneContainer3
-      ], {
-        moves(el, container, handle) {
-          return handle.className === 'handle';
-        }
-      });
-
-      clearHTML();
-      clearCSS();
-      clearJSX();
-
-    }
-  });
-
-
-  var mount = ReactDOM.render(<App />, document.getElementById('container'));
 */
 //===================================
 })();

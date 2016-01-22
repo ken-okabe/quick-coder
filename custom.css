@@ -1,0 +1,74 @@
+html, body {
+  width: 100%;
+  height: 100%;
+
+  margin: 0 0 0 0;
+}
+
+#container{
+margin: 0 0 0 0;
+width: 100%;
+height: 100%;
+}
+
+.vertical{
+  background-color: #555555;
+  height: 100%;
+}
+
+.paneContainer{
+  background-color: #999999;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.pane {
+  background-color: #aaaaaa;
+  border: 1px solid #00ffff;
+
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+
+}
+.panefix {
+  background-color: #aaaaaa;
+  border: 1px solid #ff0000;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+position:relative;
+  width: 100%;
+  height: 100%;
+}
+
+.test {
+  width: 100%;
+  height: 100%;
+  position:relative;
+
+  background-color: orange;
+}
+
+webview{
+   width: 100%;
+   height: 100%;
+   position:absolute;
+
+ }
+
+AceEditor{
+   width: 100%;
+   height: 100%;
+   position:absolute;
+}
+
+ 

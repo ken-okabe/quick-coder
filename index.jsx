@@ -115,20 +115,26 @@
     render() {
       return (
         <div className='paneContainer'>
-               <div className='pane'><span className='handle'>{"HTML (index.html)"}
-               <button onClick={() => (0) /*clearHTML*/ }>
-               {"Clear"}
-               </button></span>
+        <div className='pane'><span className='handle'>{"HTML (index.html)"}
+        <div className="right">
+        <button onClick={() => (0) /*clearHTML*/ }>
+        {"Clear"}
+        </button>
+        </div>
+        </span>
 
-               <div className='panefix'>
-{Editor()}
-                </div>
-               </div>
+        <div className='panefix'>
+        {Editor()}
+        </div>
+        </div>
 
-               <div className='pane'><span className='handle'>{"CSS (index.css)"}
-               <button onClick={() => (0) /*clearCSS*/ }>
-               {"Clear"}
-               </button></span>
+        <div className='pane'><span className='handle'>{"CSS (index.css)"}
+        <div className="right">
+        <button onClick={() => (0) /*clearCSS*/ }>
+        {"Clear"}
+        </button>
+        </div>
+        </span>
 
                <div className='panefix'>
 {Editor()}
@@ -146,11 +152,14 @@
     render() {
       return (
         <div className='paneContainer'>
-          <div className='pane'><span className='handle'>{'JavaScript (babel index.jsx -o index0.js; webpack index0.js index.js;)  babelrc=["es2015","react"]'}
+        <div className='pane'><span className='handle'>{"ES6/JSX => ES5 JavaScript (index.js)"}
 
-          <button onClick={() => (0) /*clearJSX*/ }>
-          {"Clear"}
-          </button></span>
+        <div className="right">
+        <button onClick={() => (0) /*clearJSX*/ }>      
+        {"Clear"}
+        </button>
+        </div>
+        </span>
 
           <div className='panefix'>
 {Editor()}
@@ -331,30 +340,7 @@
 
   */
 /*
- 
 
-  const seqComponent = (__seq) => {
-
-    class SeqComponent extends React.Component {
-      constructor() {
-        super();
-        this.state = {
-          seq: __seq.t
-        };
-        const timeseq = __seq
-          .tMap((val) => {
-            this.setState({
-              seq: val
-            });
-          });
-      }
-      render() {
-        return (<span> {this.state.seq}</span> );
-      };
-    }
-
-    return (<SeqComponent/>);
-  };
 
 
 

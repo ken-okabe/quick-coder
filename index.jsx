@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const spawn = require('child_process').spawn;
+
   const React = require('react');
   const ReactDOM = require('react-dom');
   const Immutable = require('immutable');
@@ -10,69 +12,18 @@
   const SplitPane = require('react-split-pane');
   const dragula = require('react-dragula');
 
-  //const brace = require('brace');
   //================================
+  const __interval1 = __
+    .intervalSeq(Immutable.Range(), 500);
 
-  const __interval3 = __
-    .intervalSeq(Immutable.Range(), 100000)
-    .__((count) => (__.log.t = count)); //console.log
+  const __interval2 = __
+    .intervalSeq(Immutable.Range(), 1000);
 
-
-  class ContentEditable extends React.Component {
-    constructor() {
-      super();
-      this.emitChange = this.emitChange.bind(this);
-    }
-
-    shouldComponentUpdate(nextProps) {
-      return !this.htmlEl || nextProps.html !== this.htmlEl.innerHTML ||
-        this.props.disabled !== nextProps.disabled;
-    }
-
-    componentDidUpdate() {
-      if (this.htmlEl && this.props.html !== this.htmlEl.innerHTML) {
-        this.htmlEl.innerHTML = this.props.html;
-      }
-    }
-
-    emitChange(evt) {
-      if (!this.htmlEl) return;
-      var html = this.htmlEl.innerHTML;
-      if (this.props.onChange && html !== this.lastHtml) {
-        evt.target = {
-          html: html,
-          text: this.htmlEl.innerText
-        };
-        this.props.onChange(evt);
-      }
-      this.lastHtml = html;
-    }
-
-    render() {
-      return React.createElement(
-        this.props.tagName || 'code',
-        Object.assign({}, this.props, {
-          ref: (e) => this.htmlEl = e,
-          onInput: this.emitChange,
-          onBlur: this.emitChange,
-          contentEditable: !this.props.disabled,
-          dangerouslySetInnerHTML: {
-            __html: this.props.html
-          }
-        }),
-        this.props.children);
-    }
-  }
-
-
-  const Editor = () => {
-    const __html = __().log("__html");
-    const __text = __().log("__text");
-
-    const onChange = (e) => {
-      __html.t = e.target.html;
-      __text.t = e.target.text;
+  const Editor = (__code, __setCode) => {
+    const onInput = (e) => {
+      __code.t = e.target.innerText;
     };
+
     const style = {
       "width": "100%",
       "height": "100%",
@@ -80,34 +31,180 @@
       "overflow": "auto",
       "backgroundColor": "#1B2D33"
     };
-    const __seqEl = __([__html])
-      .__(([html]) => (<ContentEditable
-        style={style}
-        html={html}
-        onChange={onChange}
-        disabled={false}
-        />));
-
-    __html.t = "";
+    const __seqEl = __([__setCode])
+      .__(([setCode]) => (<code style={style}
+        contentEditable
+        onInput ={onInput}
+        dangerouslySetInnerHTML={{
+          __html: setCode
+        }} />
+      ));
     return __Element(__seqEl);
   };
+
+  const Console = (__setCode) => {
+    const style = {
+      "width": "100%",
+      "height": "100%",
+      "position": "absolute",
+      "overflow": "auto",
+      "backgroundColor": "#222222"
+    };
+    const __seqEl = __([__setCode])
+      .__(([setCode]) => (<code style={style}
+        dangerouslySetInnerHTML={{
+          __html: setCode
+        }} />
+      ));
+
+    return __Element(__seqEl,
+      (dom) => (dom.scrollTop = dom.scrollHeight));
+  };
+
+  const __codeHTML = __();
+  const __codeCSS = __();
+  const __codeES = __();
+
+  const __codeSetHTML = __();
+  const __codeSetCSS = __();
+  const __codeSetES = __();
+  const __codeSetConsole = __();
+
+  const fs = require('fs');
+  const fsWrieThenReload = (obj) => {
+    console.log("!!!fsWrieThenReload");
+
+    fs.writeFile(obj.filename, obj.data, "utf-8",
+      (err) => {
+        if (err) {
+          throw err;
+        } else {
+          webReload();
+        }
+      });
+  };
+
+
+  const clearHTML = () => {
+    __.log.t = "clearHTML!!!!!!!!!!!!!!!!!!!!!";
+    fs.readFile(__dirname + '/code_template/index.html', 'utf8',
+      (err, data) => {
+        if (err)
+          throw err;
+        __.log.t = data;
+
+        const data1 = data
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;;")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;");
+
+        const data2 = "&lt;!DOCTYPE&nbsp;html&gt;\n&lt;html&gt;\n&nbsp;&nbsp;&lt;head&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;meta&nbsp;charset=\'UTF-8\'&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;link&nbsp;href=\'./index.css\'&nbsp;rel=\'stylesheet\'&nbsp;type=\'text/css\'&nbsp;/&gt;\n&nbsp;&nbsp;&lt;/head&gt;\n&nbsp;&nbsp;&lt;body&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;id=\'container\'/&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;script&nbsp;src=\'./index.js\'&gt;&lt;/script&gt;\n&nbsp;&nbsp;&lt;/body&gt\n;&lt;/html&gt;";
+        __codeSetHTML.t = "<pre>" + data2 + "</pre> ";
+      });
+  };
+
+  const clearCSS = () => {
+    fs.readFile(__dirname + '/code_template/index.css',
+      'utf8',
+      (err, data) => {
+        if (err)
+          throw err;
+
+        __codeSetCSS.t = "<pre>" + data.toString() + "</pre>";
+      });
+  };
+
+  const clearES = () => {
+    fs.readFile(__dirname + '/code_template/index.jsx',
+      'utf8',
+      (err, data) => {
+        if (err)
+          throw err;
+
+        __codeSetES.t = "<pre>" + data.toString() + "</pre>";
+      });
+  };
+
+  const clearConsole = () => {
+    __.log.t = "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    __codeSetConsole.t = "";
+  };
+
+  const __webReloadBeacon = __();
+
+  const webReload = () => {
+    console.log("webReload");
+    __webReloadBeacon.t = 1;
+  };
+
+  const timeseqHTML = __([__interval2, __codeHTML])
+    .__(([interval, code]) => {
+      fsWrieThenReload({
+        filename: __dirname + '/code/index.html',
+        data: code
+      });
+    });
+
+  const timeseqCSS = __([__interval2, __codeCSS])
+    .__(([interval, code]) => {
+      fsWrieThenReload({
+        filename: __dirname + '/code/index.css',
+        data: code
+      });
+    });
+
+  //
+  const __transpileCleared = __();
+  const __timeseqES = __([__interval1, __codeES, __transpileCleared])
+    .__(([interval, code, transpileCleared]) => {
+      __codeSetConsole.t += "<pre>------------------------------</pre>";
+      const babel = spawn(__dirname + '/node_modules/.bin/babel-node'
+        , ['-p', code]);
+
+      const __live = __([__codeES]).__(() => (0));
+
+      babel.stdout
+        .on('data', (data) => {
+          __transpileCleared.t = 1;
+          if (__live.t !== 0) {
+            console.info("output:", data.toString());
+            __codeSetConsole.t += "<pre>" + data.toString() + "</pre>";
+
+          }
+        });
+      babel.stderr
+        .on('data', (data) => {
+          __transpileCleared.t = 1;
+          if (__live.t !== 0) {
+            console.info("BabelTranspileError:", data.toString());
+            __codeSetConsole.t += "<pre>" + data.toString() + "</pre>";
+          }
+        });
+
+      fsWrieThenReload({
+        filename: __dirname + '/code/index.es',
+        data: code
+      });
+    });
+
+  __transpileCleared.t = 1; //initial clear
 
   const WebView = React.createClass({
     componentDidMount() {
       const webview1 = ReactDOM.findDOMNode(this);
-    /*
-        const timeseq = __webReloadBeacon
-          .tMap((val) => {
-
-            console.log("=============webview");
-            console.log(val);
-            webview1.reload();
-          });
-    */
+      //---
+      const timeseq = __webReloadBeacon
+        .__((val) => {
+          console.log("=============webview reload!!");
+          webview1.reload();
+        });
+    //----
     },
     render() {
-      return (<webview  src="http://localhost:17890"></webview>
-        );
+      return (<webview
+        src="http://localhost:17890"
+        nodeintegration></webview>);
     }
 
   });
@@ -117,27 +214,27 @@
         <div className='paneContainer'>
         <div className='pane'><span className='handle'>{"HTML (index.html)"}
         <div className="right">
-        <button onClick={() => (0) /*clearHTML*/ }>
+        <button onClick={clearHTML}>
         {"Clear"}
         </button>
         </div>
         </span>
 
         <div className='panefix'>
-        {Editor()}
+          {Editor(__codeHTML, __codeSetHTML)}
         </div>
         </div>
 
         <div className='pane'><span className='handle'>{"CSS (index.css)"}
         <div className="right">
-        <button onClick={() => (0) /*clearCSS*/ }>
+        <button onClick={clearCSS}>
         {"Clear"}
         </button>
         </div>
         </span>
 
                <div className='panefix'>
-{Editor()}
+                {Editor(__codeCSS, __codeSetCSS)}
                 </div>
 
                </div>
@@ -152,17 +249,17 @@
     render() {
       return (
         <div className='paneContainer'>
-        <div className='pane'><span className='handle'>{"ES6/JSX => ES5 JavaScript (index.js)"}
+        <div className='pane'><span className='handle'>{"ES6/JSX  (index.es)"}
 
         <div className="right">
-        <button onClick={() => (0) /*clearJSX*/ }>      
+        <button onClick={clearES}>
         {"Clear"}
         </button>
         </div>
         </span>
 
           <div className='panefix'>
-{Editor()}
+            {Editor(__codeES, __codeSetES)}
           </div>
           </div>
           </div>
@@ -175,9 +272,16 @@
     render() {
       return (
         <div className='paneContainer'>
-        <div className='pane'><span className='handle'>{"Console"}</span>
+        <div className='pane'><span className='handle'>{"Console Output"}
+        <div className="right">
+        <button onClick={clearConsole}>
+        {"Clear"}
+        </button>
+        </div>
+
+        </span>
         <div className='panefix'>
-{Editor()}
+          {Console(__codeSetConsole)}
                     </div>
                </div>
                <div className='pane'><span className='handle'>{"WebBrowser"}</span>
@@ -197,8 +301,6 @@
       const DOMpaneContainer2 = ReactDOM.findDOMNode(this.refs.p2);
       const DOMpaneContainer3 = ReactDOM.findDOMNode(this.refs.p3);
 
-      console.log(DOMpaneContainer1);
-
       dragula([DOMpaneContainer1,
         DOMpaneContainer2,
         DOMpaneContainer3
@@ -207,12 +309,10 @@
           return handle.className === 'handle';
         }
       });
-
-
-      //  clearHTML();
-      //  clearCSS();
-      //    clearJSX();
-
+      clearHTML();
+      clearCSS();
+      clearES();
+      clearConsole();
     },
     render() {
       return (
@@ -229,157 +329,10 @@
 
 
   const mount = ReactDOM.render(<App />, document.getElementById('container'));
-/*
 
-
-  const __codeHTML = __();
-  const __codeCSS = __();
-  const __codeJSX = __();
-
-  const timeseqHTML = __([__interval5, __codeHTML])
-    .tMap(([interval, code]) => {
-      console.log('@@@@@@@@@');
-      console.log(code);
-
-      evaluate({
-        filename: __dirname + '/code/index.html',
-        data: code,
-        f: webReload
-      });
-
-    });
-
-  const timeseqCSS = __([__interval5, __codeCSS])
-    .tMap(([interval, code]) => {
-      console.log(code);
-
-      evaluate({
-        filename: __dirname + '/code/index.css',
-        data: code,
-        f: webReload
-      });
-    });
-
-  const timeseqJSX = __([__interval5, __codeJSX])
-    .tMap(([interval, code]) => {
-      console.log(code);
-
-      evaluate({
-        filename: __dirname + '/code/index.jsx',
-        data: code,
-        f: () => {
-
-          babel.stdout
-            .on('data', (data) => {
-              console.log(`stdout: ${data}`);
-
-              webpack.stdout
-                .on('data', (data) => {
-                  console.log(`stdout: ${data}`);
-
-                  webReload();
-                });
-
-            });
-
-          babel.stderr
-            .on('data', (data) => {
-              console.log(`stderr: ${data}`);
-            });
-        }
-      });
-    });
-
-  const __webReloadBeacon = __();
-
-  const __interval500 = __.intervalSeq(500)
-    .tMap((tt, t0) => (tt - t0) / 1000);
-
-  const webReload = () => {
-    console.log("webReload");
-    __webReloadBeacon.t = __interval500.t;
-
-    console.log(__webReloadBeacon.t);
-  };
-
-  const timeseq = __webReloadBeacon
-    .tMap((val) => {
-
-      console.log("===+++++++++=webview");
-      console.log(val);
-    });
-
-  const fs = require('fs');
-  const evaluate = (obj) => {
-    console.log("!!!evaluate");
-    fs.writeFile(obj.filename, obj.data,
-      (err) => {
-        if (err) {
-          throw err;
-        } else {
-          obj.f();
-        }
-      });
-  };
-
-
-  const spawn = require('child_process').spawn;
-
-  //babel ./index.jsx -o ./index0.js; webpack ./index0.js ./index.js;
-  const babel = spawn(__dirname + '/node_modules/.bin/babel'
-    , [__dirname + '/code/index.jsx', '-o', __dirname + '/code/index0.js;']);
-
-  const webpack = spawn(__dirname + '/node_modules/.bin/webpack'
-    , [__dirname + '/code/index0.js', __dirname + '/code/index.js;']);
-
-
-
-  //========================================
-
-
-
-  */
-/*
-
-
-
-
-  // __val ={__codeHTML}
-
-
-  const clearHTML = () => {
-    fs.readFile(__dirname + '/code_template/index.html', 'utf8',
-      (err, data) => {
-        if (err)
-          throw err;
-
-        __codeHTML.t = data;
-      });
-  };
-
-  const clearCSS = () => {
-    fs.readFile(__dirname + '/code_template/index.css',
-      'utf8',
-      (err, data) => {
-        if (err)
-          throw err;
-
-        __codeCSS.t = data;
-      });
-  };
-
-  const clearJSX = () => {
-    fs.readFile(__dirname + '/code_template/index.jsx',
-      'utf8',
-      (err, data) => {
-        if (err)
-          throw err;
-
-        __codeJSX.t = data;
-      });
-  };
 
   //============================
+
 
   (() => {
     const port = 17890;
@@ -483,9 +436,6 @@
   })();
 
 
-  //============================
-
-
-*/
+//============================
 //===================================
 })();

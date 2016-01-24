@@ -140,14 +140,15 @@
       "height": "100%",
       "position": "absolute",
       "overflow": "auto",
-      "backgroundColor": "#1B2D33"
+      "backgroundColor": "#1B2D33",
+      "font-family": "Source Code Pro"
     };
     return __Element(__([__setCode])
       .__(([setCode]) => {
         //--------
         __.log.t = setCode;
 
-        return (<code style={style}
+        return (<div style={style}
           contentEditable
           onInput ={onInput}
           dangerouslySetInnerHTML={{
@@ -163,10 +164,11 @@
       "height": "100%",
       "position": "absolute",
       "overflow": "auto",
-      "backgroundColor": "#222222"
+      "backgroundColor": "#222222",
+      "font-family": "Source Code Pro"
     };
     return __Element(__([__setCode])
-      .__(([setCode]) => (<code style={style}
+      .__(([setCode]) => (<div style={style}
         dangerouslySetInnerHTML={{
           __html: setCode
         }} />
@@ -226,14 +228,13 @@
           throw err;
         __.log.t = data;
 
-        const data1 = data
         /*  .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;;")
           .replace(/&/g, "&amp;")
           .replace(/"/g, "&quot;")*/ ;
 
 
-        __codeSetHTML.t = "<pre>" + data1 + "</pre> ";
+        __codeSetHTML.t = "<pre>" + data.toString() + "</pre> ";
       });
   };
 
@@ -275,9 +276,11 @@
   const __transpileCleared = __();
   const __timeseqES = __([__interval1, __codeES, __transpileCleared])
     .__(([interval, code, transpileCleared]) => {
-      __codeSetConsole.t += "<pre>------------------------------</pre>";
+      __codeSetConsole.t += "<div>------------------------------</div>";
       const babel = spawn(__dirname + '/node_modules/.bin/babel-node'
         , ['-p', code]);
+
+      const node = spawn('node', ['-p', code]);
 
       const __live = __([__codeES]).__(() => (0));
 

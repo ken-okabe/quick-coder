@@ -60,9 +60,12 @@ button {
   background-color: #222222;
 }
 
-webview{
+webview {
    width: 100%;
    height: 100%;
    position:absolute;
+ }
 
+ pre {
+   margin: 0 0 0 0;
  }

@@ -284,7 +284,7 @@
 
       const __live = __([__codeES]).__(() => (0));
 
-      babel.stdout
+      node.stdout
         .on('data', (data) => {
           __transpileCleared.t = 1;
           if (__live.t !== 0) {

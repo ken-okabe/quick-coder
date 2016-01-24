@@ -227,13 +227,13 @@
         __.log.t = data;
 
         const data1 = data
-          .replace(/</g, "&lt;")
+        /*  .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;;")
           .replace(/&/g, "&amp;")
-          .replace(/"/g, "&quot;");
+          .replace(/"/g, "&quot;")*/ ;
 
-        const data2 = "&lt;!DOCTYPE&nbsp;html&gt;\n&lt;html&gt;\n&nbsp;&nbsp;&lt;head&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;meta&nbsp;charset=\'UTF-8\'&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;link&nbsp;href=\'./index.css\'&nbsp;rel=\'stylesheet\'&nbsp;type=\'text/css\'&nbsp;/&gt;\n&nbsp;&nbsp;&lt;/head&gt;\n&nbsp;&nbsp;&lt;body&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;id=\'container\'/&gt;\n&nbsp;&nbsp;&nbsp;&nbsp;&lt;script&nbsp;src=\'./index.js\'&gt;&lt;/script&gt;\n&nbsp;&nbsp;&lt;/body&gt\n;&lt;/html&gt;";
-        __codeSetHTML.t = "<pre>" + data2 + "</pre> ";
+
+        __codeSetHTML.t = "<pre>" + data1 + "</pre> ";
       });
   };
 

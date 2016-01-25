@@ -38,7 +38,7 @@
     };
 
     const request = (req, res) => {
-      __.log.t = req;
+      //__.log.t = req;
       const uri = url.parse(req.url).pathname;
       const dir = path.join(__dirname, directory);
       const filepath = path.join(dir, unescape(uri));
@@ -146,8 +146,6 @@
     return __Element(__([__setCode])
       .__(([setCode]) => {
         //--------
-        __.log.t = setCode;
-
         return (<div style={style}
           contentEditable
           onInput ={onInput}
@@ -167,13 +165,26 @@
       "backgroundColor": "#222222",
       "font-family": "Source Code Pro"
     };
-    return __Element(__([__setCode])
-      .__(([setCode]) => (<div style={style}
+    //--------------------
+    return __Element(__
+      .intervalSeq(Immutable.Range(0, 1), 0)
+      .__(() => (<div style={style}
         dangerouslySetInnerHTML={{
-          __html: setCode
-        }} />
-      )),
-      (dom) => (dom.scrollTop = dom.scrollHeight));
+          __html: ""
+        }} />)),
+      (dom) => __([__setCode])
+          .__(([setCode]) => {
+            if (setCode === "**??##Clear##??**") {
+              dom.innerHTML = "";
+            } else {
+
+              const pre = document.createElement("pre");
+              pre.innerHTML = setCode;
+              dom.appendChild(pre);
+              dom.scrollTop = dom.scrollHeight;
+            }
+          }));
+  //--------------------
   };
 
   const __codeHTML = __();
@@ -226,7 +237,6 @@
       (err, data) => {
         if (err)
           throw err;
-        __.log.t = data;
         reloadByHTML(data);
 
         //editor display
@@ -259,7 +269,7 @@
   };
 
   const clearConsole = () => {
-    __codeSetConsole.t = "";
+    __codeSetConsole.t = "**??##Clear##??**";
   };
 
 
@@ -267,7 +277,7 @@
   const timeseqHTML = __([__interval2, __codeHTML])
     .__(([interval, code]) => {
       __.log.t = "reloadinghtml!!";
-      __.log.t = code;
+
       reloadByHTML(code);
     });
 
@@ -278,29 +288,34 @@
   const __transpileCleared = __();
   const __timeseqES = __([__interval1, __codeES, __transpileCleared])
     .__(([interval, code, transpileCleared]) => {
-      __codeSetConsole.t += "<div>------------------------------</div>";
+      __codeSetConsole.t = "------------------------------";
 
       reloadByES(code);
-      const babel = spawn(__dirname + '/node_modules/.bin/babel-node'
-        , ['-p', code]);
-      const node = spawn('node', ['-p', code]);
+
 
       const __live = __([__codeES]).__(() => (0));
 
-      babel.stdout
+
+      const node = spawn('node', ['-p', code]);
+      const babel = spawn(__dirname + '/node_modules/.bin/babel-node'
+        , ['-p', code]);
+
+      const engine = node;
+
+      engine.stdout
         .on('data', (data) => {
           __transpileCleared.t = 1;
           if (__live.t !== 0) {
-            console.info("output:", data.toString());
-            __codeSetConsole.t += "<pre>" + data.toString() + "</pre>";
+            //  console.info("output:", data.toString());
+            __codeSetConsole.t = data.toString();
           }
         });
-      babel.stderr
+      engine.stderr
         .on('data', (data) => {
           __transpileCleared.t = 1;
           if (__live.t !== 0) {
-            console.info("BabelTranspileError:", data.toString());
-            __codeSetConsole.t += "<pre>" + data.toString() + "</pre>";
+            //  console.info("BabelTranspileError:", data.toString());
+            __codeSetConsole.t = data.toString();
           }
         });
 

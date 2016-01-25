@@ -279,9 +279,10 @@
   const __timeseqES = __([__interval1, __codeES, __transpileCleared])
     .__(([interval, code, transpileCleared]) => {
       __codeSetConsole.t += "<div>------------------------------</div>";
+
+      reloadByES(code);
       const babel = spawn(__dirname + '/node_modules/.bin/babel-node'
         , ['-p', code]);
-
       const node = spawn('node', ['-p', code]);
 
       const __live = __([__codeES]).__(() => (0));
@@ -292,8 +293,6 @@
           if (__live.t !== 0) {
             console.info("output:", data.toString());
             __codeSetConsole.t += "<pre>" + data.toString() + "</pre>";
-
-            reloadByES(code);
           }
         });
       babel.stderr

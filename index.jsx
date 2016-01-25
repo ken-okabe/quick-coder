@@ -221,20 +221,22 @@
     }));
 
   const templateHTML = () => {
-    __.log.t = "clearHTML!!!!!!!!!!!!!!!!!!!!!";
+    __.log.t = "templateHTML!!!!!!!!!!!!!!!!!!!!!";
     fs.readFile(__dirname + '/code_template/index.html', 'utf8',
       (err, data) => {
         if (err)
           throw err;
         __.log.t = data;
+        reloadByHTML(data);
 
-        /*  .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;;")
-          .replace(/&/g, "&amp;")
-          .replace(/"/g, "&quot;")*/ ;
+        //editor display
+        const data1 = data
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
 
-
-        __codeSetHTML.t = "<pre>" + data.toString() + "</pre> ";
+        __codeSetHTML.t = "Clearing : " + Date.now();
+        __codeSetHTML.t = "<pre>" + data1 + "</pre>";
       });
   };
 
@@ -284,7 +286,7 @@
 
       const __live = __([__codeES]).__(() => (0));
 
-      node.stdout
+      babel.stdout
         .on('data', (data) => {
           __transpileCleared.t = 1;
           if (__live.t !== 0) {

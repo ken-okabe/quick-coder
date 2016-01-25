@@ -1,6 +1,6 @@
 {
   "name": "quick-coder",
-  "version": "1.0.0",
+  "version": "0.3.0",
   "description": "Live Coding of node, es, React jsx, and webView based on Electron, like jsFiddle",
   "main": "",
   "scripts": {
